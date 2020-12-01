@@ -138,7 +138,7 @@ public class PainelAutocarro extends JPanel implements Runnable {
        // 65,190,15,15
        
        g2d.setPaint(new Color(255,165,0));
-       g2d.fillOval(65+xMovimentInside, 190,15,15);
+       g2d.fillOval(65+xMovimentInside, 201,15,15);
        
         //Linhas do autocarro
        //Linha 1
