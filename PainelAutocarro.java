@@ -5,11 +5,10 @@
  */
 package autocarro;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import javax.swing.JPanel;
@@ -23,7 +22,7 @@ public class PainelAutocarro extends JPanel implements Runnable {
    private Thread thread; 
    private int xPosition = 20, xMoviment=0, xMovimentInside=0;
    private AffineTransform atf; 
-   private float angulo = 0;
+   private float angulo = 0, angulo1=0;
    private boolean flagXMovementInside = true;
    private Ellipse2D circuloPneu1;
    private Ellipse2D circuloPneu1Interior;
@@ -79,6 +78,7 @@ public class PainelAutocarro extends JPanel implements Runnable {
     }
    
    //Método responsável por pintar 
+   @Override
    public void paintComponent(Graphics g){
 
        super.paintComponent(g);
@@ -86,7 +86,7 @@ public class PainelAutocarro extends JPanel implements Runnable {
        
        // Rectângulo que representa a estrada
        g2d.setPaint(new Color(0,0,0));
-       g2d.fillRect(0,277,700 , 70);
+       g2d.fillRect(0,277,700,70);
        
        // Detalhes brancos da estrada
        for(int i=0; i<6; i++)
@@ -109,21 +109,17 @@ public class PainelAutocarro extends JPanel implements Runnable {
        g2d.setPaint(new Color(37,153,179));
        g2d.fillRect(30,120, 470, 180);
        
-       //g2d.fill(new Ellipse2D.Double(30,50,20,20));
-       
        //Rectângulo 2 (menor)
        g2d.setPaint(new Color(37,153,179));
        g2d.fillRect(500,220, 70, 80);
        
        // Janelas do autocarro
        //Janela 1
-       g2d.setPaint(new Color(255,255,255));
+       g2d.setPaint(Color.white);
        g2d.fillRect(60,180, 90, 40);
-      // g2d.setPaint(new Color(255,165,0));
-       //g2d.fillOval(70,190,15,15);
        
        //Janela 2
-       g2d.setPaint(new Color(255,255,255));
+       g2d.setPaint(Color.white);
        g2d.fillRect(160,180, 90, 40);
        
        //Janela 3
@@ -135,8 +131,6 @@ public class PainelAutocarro extends JPanel implements Runnable {
        g2d.fillRect(380,138, 90, 150);
        
        //Circulo interior da janela
-       // 65,190,15,15
-       
        g2d.setPaint(new Color(255,165,0));
        g2d.fillOval(65+xMovimentInside, 201,15,15);
        
@@ -152,16 +146,21 @@ public class PainelAutocarro extends JPanel implements Runnable {
        //Pneus do autocarro
        //Pneu 1
        
+       float dash1[] = {10.0f};
+       BasicStroke dashed = new BasicStroke(5.0f, BasicStroke.JOIN_BEVEL, BasicStroke.JOIN_BEVEL, 10.0f, dash1, 0.0f);
+       g2d.setStroke(dashed);
+       
        atf = new AffineTransform();
        atf.translate(xMoviment,0);
+       atf.rotate(Math.toRadians(angulo),65,305);
        g2d.setTransform(atf);
        
        circuloPneu1 = new Ellipse2D.Double(40,280,50, 50);
-       g2d.setPaint(new Color(128,128,128));
-       g2d.fill(circuloPneu1);
+       g2d.setPaint(new Color(255,165,0));
+       g2d.draw(circuloPneu1);
        
-       atf.rotate(Math.toRadians(angulo), circuloPneu1.getCenterX(),circuloPneu1.getCenterY());
-       g2d.setTransform(atf);
+       /*atf.rotate(Math.toRadians(angulo), circuloPneu1.getCenterX(),circuloPneu1.getCenterY());
+       g2d.setTransform(atf);*/
      
        circuloPneu1Interior = new Ellipse2D.Double(58,300,15, 15);
        g2d.setPaint(new Color(255,255,255));
@@ -169,13 +168,18 @@ public class PainelAutocarro extends JPanel implements Runnable {
        
        atf= new AffineTransform();
        atf.translate(xMoviment,0);
+       atf.rotate(Math.toRadians(angulo),515,305);
        g2d.setTransform(atf);
        
+       float dash2[] = {10.0f};
+       BasicStroke dashed1 = new BasicStroke(5.0f, BasicStroke.JOIN_BEVEL, BasicStroke.JOIN_BEVEL, 10.0f, dash2, 0.0f);
+       g2d.setStroke(dashed1);
+
        circuloPneu2 = new Ellipse2D.Double(490,280,50,50);
-       g2d.setPaint(new Color(128,128,128));
-       g2d.fill(circuloPneu2);
+       g2d.setPaint(new Color(255,165,0));
+       g2d.draw(circuloPneu2);
        
-       atf.rotate(Math.toRadians(angulo), circuloPneu2.getCenterX(),circuloPneu2.getCenterY());
+       atf.rotate(Math.toRadians(angulo1), circuloPneu2.getCenterX(),circuloPneu2.getCenterY());
        g2d.setTransform(atf);
        
        circuloPneu2Interior = new Ellipse2D.Double(508,297,15,15);
@@ -198,8 +202,10 @@ public class PainelAutocarro extends JPanel implements Runnable {
             if(isFlagXMovementInside())
              {
                 setxMovimentInside(getxMovimentInside()+1);
+                
                 // xMovimentInside > 64, porque a posição válida da bola dentro da janela é de 130(65 da posição da janela
                 //+65 da posição da bola
+                
                 if(getxMovimentInside() > 64)
                     this.setFlagXMovementInside(false);
              }        
@@ -210,8 +216,8 @@ public class PainelAutocarro extends JPanel implements Runnable {
                 }  
             
             setxMoviment(getxMoviment()+1);
-            setAngulo(getAngulo()+5);
-            thread.sleep(15);
+            setAngulo(getAngulo()+1);
+            thread.sleep(3);
             super.repaint();
               
             }
@@ -222,8 +228,6 @@ public class PainelAutocarro extends JPanel implements Runnable {
         }
         
       
-
-        
     }
     
     
