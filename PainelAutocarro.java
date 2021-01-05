@@ -9,6 +9,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import javax.swing.JPanel;
@@ -84,6 +85,8 @@ public class PainelAutocarro extends JPanel implements Runnable {
        super.paintComponent(g);
        Graphics2D g2d = (Graphics2D) g;
        
+       // Anti-Aliasing
+       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
        // Rectângulo que representa a estrada
        g2d.setPaint(new Color(0,0,0));
        g2d.fillRect(0,277,700,70);
